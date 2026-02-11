@@ -1,47 +1,55 @@
-# WSL Recover Files
+# Recover lost files from corrupted windows and ext4.vhdx
 
-This directory contains notes and resources for recovering files from WSL (Windows Subsystem for Linux).
+## Mount ext4.vhdx in new WSL
 
-## Overview
+> Search for the file in location like `C:\Users\<username>\AppData\Local\Packages\<CanonicalGroupLimited.Ubuntu-16.04onWindows_79rhkp1fndgsc>\LocalState` .<br>
+>
+ If you are trying to recover after a windows reset, search the above path in `C:\Windows.old` folder instead of `C:` directory :<br>`C:\Windows.old\Users\<username>\AppData\Local\Packages\<CanonicalGroupLimited.Ubuntu-16.04onWindows_79rhkp1fndgsc>\LocalState` .
 
-When working with WSL, you may need to recover files from your Linux distribution or access files stored in the WSL filesystem from Windows.
+> First double click the `ext4.vhdx` file. See that the disk shows up as online and initialized in `Disk Management`. If not, initialize the disk (right-click and see).
 
-## File Locations
+Note the Disk number \<n\> in above step and the follow the following instructions from ref [1]:
 
-### Accessing WSL Files from Windows
+> Install a new WSL. In this WSL, run `lsblk`.
 
-WSL2 file systems can be accessed from Windows via the network path:
-```
-\\wsl$\<distro-name>\
-```
+Alternatively, `fdisk -l` can be used.
 
-For example:
-```
-\\wsl$\Ubuntu\home\username\
-```
+> In an elevated Powershell, run `wsl --mount \\.\PhysicalDrive<n> --bare`.
 
-### WSL File System Location
+> Switch back to WSL now. Run `lsblk` again and note the newly added `/dev/sdx` (may not be x).
 
-The WSL file system is typically stored in:
-```
-%LOCALAPPDATA%\Packages\<WSL_Distro_Package>\LocalState\
-```
 
-## Recovery Tips
+## Repair disk and recover data
 
-1. **From Windows Explorer**: Navigate to `\\wsl$\` to access all WSL distributions
-2. **From PowerShell/CMD**: Use `\\wsl$\<distro>\` path to access files
-3. **Export Distribution**: Use `wsl --export <distro> <filename>` to backup
-4. **Import Distribution**: Use `wsl --import <distro> <install-location> <filename>` to restore
+Following instructions as _root user_ from ref [2]:
 
-## Common Scenarios
+> `mkdir /wsl-rec`<br>
+  `mount /dev/sdx /wsl-rec`
 
-- Recovering files after WSL corruption
-- Accessing WSL files when the distribution won't start
-- Backing up WSL file systems
-- Migrating files between WSL instances
+If above doesn't work, try the below instructions and return back to mounting.
 
-## Additional Resources
+> `fsck.ext4 -v /dev/sdx`
 
-- [WSL Documentation](https://docs.microsoft.com/en-us/windows/wsl/)
-- [WSL File System Support](https://docs.microsoft.com/en-us/windows/wsl/filesystems)
+If above command tells you to _update e2fsck_, do the same (see below) and return back above.
+
+> `mke2fs -n /dev/sdx`
+
+Try mounting again. If it fails, note the block numbers returned by above command and try this with all of those individually:
+
+> `e2fsck -b <block-number> /dev/sdx`
+
+## Update e2fsck
+
+Run as _root user_ the following instructions from [3]:
+
+> `wget https://sourceforge.net/projects/e2fsprogs/files/e2fsprogs/v1.46.5/e2fsprogs-1.46.5.tar.gz`<br>
+  `tar xzf e2fsprogs*`<br>
+  `cd e2fsprogs-1.46.5/`<br>
+  `./configure && make && make install`
+
+
+## References:
+
+1. [Adding Another Disk to WSL2](https://joeferguson.me/adding-another-disk-to-wsl2/)
+2. [Finding or Recovering your WSL Data](https://christopherkibble.com/posts/wsl-vhdx-recovery/)
+3. [Update e2fsck](https://askubuntu.com/questions/747656/after-a-power-failure-unable-to-mount-the-drive-get-a-newer-version-of-e2fsck)
