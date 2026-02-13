@@ -13,7 +13,7 @@ AlignConsecutiveAssignments:
   AlignFunctionPointers: false
   PadOperators:    true
 AlignConsecutiveBitFields:
-  Enabled:         false
+  Enabled:         true
   AcrossEmptyLines: false
   AcrossComments:  false
   AlignCompound:   false
@@ -29,7 +29,7 @@ AlignConsecutiveDeclarations:
   AlignFunctionPointers: false
   PadOperators:    false
 AlignConsecutiveMacros:
-  Enabled:         false
+  Enabled:         true
   AcrossEmptyLines: false
   AcrossComments:  false
   AlignCompound:   false
@@ -78,7 +78,7 @@ AllowShortBlocksOnASingleLine: Never
 AllowShortCaseExpressionOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortCompoundRequirementOnASingleLine: true
-AllowShortEnumsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
@@ -118,8 +118,13 @@ BreakAfterJavaFieldAnnotations: false
 BreakAfterReturnType: None
 BreakArrays:     true
 BreakBeforeBinaryOperators: true
-BreakBeforeConceptDeclarations: Always
 BreakBeforeBraces: Attach
+# BreakBeforeCloseBracketBracedList: true
+# BreakBeforeCloseBracketFunction: true
+# BreakBeforeCloseBracketIf: true
+# BreakBeforeCloseBracketLoop: true
+# BreakBeforeCloseBracketSwitch: true
+BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTemplateCloser: false
 BreakBeforeTernaryOperators: true
@@ -235,7 +240,7 @@ SortIncludes: false
 SortJavaStaticImport: Before
 SortUsingDeclarations: LexicographicNumeric
 SpaceAfterCStyleCast: false
-SpaceAfterLogicalNot: false
+SpaceAfterLogicalNot: true
 SpaceAfterOperatorKeyword: false
 SpaceAfterTemplateKeyword: true
 SpaceAroundPointerQualifiers: Default
